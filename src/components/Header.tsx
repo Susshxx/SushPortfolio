@@ -1,0 +1,92 @@
+import React, { useEffect, useMemo, useState } from 'react';
+import { DownloadIcon, MenuIcon, XIcon } from 'lucide-react';
+import { Magnetic } from './Magnetic';
+import { useActiveSection } from '../hooks/useActiveSection';
+
+const NAV_LINKS = [
+{ label: 'About', id: 'about' },
+{ label: 'Skills', id: 'skills' },
+{ label: 'Projects', id: 'projects' },
+{ label: 'Education', id: 'education' },
+{ label: 'Contact', id: 'contact' }];
+
+
+export function Header() {
+  const [open, setOpen] = useState(false);
+  const ids = useMemo(() => NAV_LINKS.map((l) => l.id), []);
+  const active = useActiveSection(ids);
+
+  useEffect(() => {
+    const onResize = () => window.innerWidth >= 768 && setOpen(false);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 w-full border-b border-line bg-white/90 backdrop-blur">
+      <div className="mx-auto flex h-[84px] w-full max-w-[1280px] items-center justify-between px-6 md:px-8">
+        <a href="#hero" className="font-display text-2xl font-bold text-heading">
+          Sushanta<span className="text-accent">.</span>
+        </a>
+
+        <nav className="hidden items-center gap-8 md:flex" aria-label="Main">
+          {NAV_LINKS.map((link) => {
+            const isActive = active === link.id;
+            return (
+              <a
+                key={link.id}
+                href={`#${link.id}`}
+                aria-current={isActive ? 'true' : undefined}
+                className={`text-base font-medium transition-colors relative z-10 ${
+                isActive ? 'text-accent' : 'text-body hover:text-heading dark:hover:text-white'}`
+                }>
+                
+                {link.label}
+              </a>);
+
+          })}
+          <Magnetic>
+            <a
+              href="/Sushanta Marahatta CV.pdf"
+              download
+              className="flex items-center gap-2 rounded-full bg-heading px-5 py-2 text-base font-medium text-white">
+              
+              <DownloadIcon className="h-4 w-4" aria-hidden="true" />
+              Resume
+            </a>
+          </Magnetic>
+        </nav>
+
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          className="rounded-lg border border-line p-2 text-heading md:hidden">
+          
+          {open ? <XIcon className="h-5 w-5" /> : <MenuIcon className="h-5 w-5" />}
+        </button>
+      </div>
+
+      {open &&
+      <nav className="border-t border-line bg-white px-6 py-4 md:hidden" aria-label="Mobile">
+          <ul className="flex flex-col gap-4">
+            {NAV_LINKS.map((link) =>
+          <li key={link.id}>
+                <a
+              href={`#${link.id}`}
+              onClick={() => setOpen(false)}
+              className={`text-base font-medium relative z-10 ${
+              active === link.id ? 'text-accent' : 'text-body dark:hover:text-white'}`
+              }>
+              
+                  {link.label}
+                </a>
+              </li>
+          )}
+          </ul>
+        </nav>
+      }
+    </header>);
+
+}

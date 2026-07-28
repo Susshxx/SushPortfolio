@@ -1,0 +1,114 @@
+/* @import url() FONT IMPORTS MUST ALWAYS BE AT THE VERY TOP OF THIS FILE, ABOVE THE TAILWIND IMPORTS — DO NOT DELETE THIS COMMENT */
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Gloria+Hallelujah&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* CRITICAL: THE FOLLOWING TAILWIND IMPORTS MUST NEVER BE DELETED OR REORDERED — DO NOT DELETE THIS COMMENT */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* END TAILWIND IMPORTS — ALL OTHER CSS MUST GO BELOW THIS LINE */
+
+:root {
+  --surface: #ffffff;
+  --border: #e3e3e8;
+  --body: #5c5c70;
+  --heading: #17171c;
+  --accent: #00b3a4;
+}
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 84px;
+}
+body {
+  font-family: 'Caveat', 'Comic Sans MS', cursive;
+  font-size: 1.15rem;
+  color: var(--heading);
+  background-color: var(--surface);
+  overflow-x: hidden;
+}
+/* Custom cursor replaces the native one on precise pointers */
+@media (pointer: fine) {
+  body,
+  a,
+  button,
+  input,
+  textarea,
+  label,
+  [role='button'] {
+    cursor: none;
+  }
+}
+/* ---------------------------------------------------------------
+   Dark theme — deep charcoal (not pure black) with clear contrast
+   --------------------------------------------------------------- */
+.dark body {
+  background-color: #14151a;
+  color: #f3f4f7;
+}
+.dark section,
+.dark main,
+.dark .bg-white,
+.dark .bg-surface {
+  background-color: #14151a;
+}
+.dark .bg-white\/90,
+.dark header,
+.dark footer {
+  background-color: rgba(20, 21, 26, 0.92);
+}
+.dark .bg-secondary {
+  background-color: #23252d;
+}
+.dark .bg-black,
+.dark .bg-heading {
+  background-color: #f3f4f7;
+}
+.dark .text-white {
+  color: #14151a;
+}
+.dark .text-heading,
+.dark .text-black {
+  color: #f3f4f7;
+}
+.dark .text-heading\/70 {
+  color: rgba(243, 244, 247, 0.75);
+}
+.dark .text-accent {
+  color: #00d4c4;
+}
+.dark .text-body {
+  color: #d1d5db;
+}
+.dark .text-chip {
+  color: #e8eaf0;
+}
+.dark .border-line {
+  border-color: #3f424f;
+}
+.dark .border-black {
+  border-color: #5a5e6b;
+}
+.dark .project-panel {
+  background-color: #1c1e25;
+}
+.dark .shadow-sm,
+.dark .shadow-md,
+.dark .shadow-lg,
+.dark .shadow-xl {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+.dark input,
+.dark textarea {
+  background-color: #1c1e25;
+  color: #f3f4f7;
+}
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #7e8290;
+}
+.gradient-text {
+  background-image: linear-gradient(180deg, #00b3a4 0%, #000000 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
