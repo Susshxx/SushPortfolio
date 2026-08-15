@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { DownloadIcon, MenuIcon, XIcon } from 'lucide-react';
 import { Magnetic } from './Magnetic';
 import { useActiveSection } from '../hooks/useActiveSection';
@@ -10,11 +10,15 @@ const NAV_LINKS = [
 { label: 'Education', id: 'education' },
 { label: 'Contact', id: 'contact' }];
 
+type HeaderProps = {
+  onOpenAdminPanel: () => void;
+};
 
-export function Header() {
+export function Header({ onOpenAdminPanel }: HeaderProps) {
   const [open, setOpen] = useState(false);
   const ids = useMemo(() => NAV_LINKS.map((l) => l.id), []);
   const active = useActiveSection(ids);
+  const longPressTimer = useRef<number | null>(null);
 
   useEffect(() => {
     const onResize = () => window.innerWidth >= 768 && setOpen(false);
@@ -22,11 +26,47 @@ export function Header() {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
+  const handleMouseDown = () => {
+    longPressTimer.current = window.setTimeout(() => {
+      onOpenAdminPanel();
+      setOpen(false);
+    }, 2000);
+  };
+
+  const handleMouseUp = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
+
+  const handleTouchStart = () => {
+    longPressTimer.current = window.setTimeout(() => {
+      onOpenAdminPanel();
+      setOpen(false);
+    }, 2000);
+  };
+
+  const handleTouchEnd = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
+
+  const handleMenuClick = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+    setOpen((v) => !v);
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full border-b border-line bg-white/90 backdrop-blur">
       <div className="mx-auto flex h-[84px] w-full max-w-[1280px] items-center justify-between px-6 md:px-8">
         <a href="#hero" className="font-display text-2xl font-bold text-heading">
-          Sushanta<span className="text-accent">.</span>
+          Sushanta<span className="text-accent">.</span>M
         </a>
 
         <nav className="hidden items-center gap-8 md:flex" aria-label="Main">
@@ -59,7 +99,13 @@ export function Header() {
 
         <button
           type="button"
-          onClick={() => setOpen((v) => !v)}
+          onClick={handleMenuClick}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={handleTouchEnd}
           aria-expanded={open}
           aria-label={open ? 'Close menu' : 'Open menu'}
           className="rounded-lg border border-line p-2 text-heading md:hidden">
@@ -84,6 +130,17 @@ export function Header() {
                 </a>
               </li>
           )}
+            <li>
+              <a
+                href="/Sushanta Marahatta CV.pdf"
+                download
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 text-base font-medium text-accent">
+                
+                <DownloadIcon className="h-4 w-4" aria-hidden="true" />
+                Download Resume
+              </a>
+            </li>
           </ul>
         </nav>
       }

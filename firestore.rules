@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Projects collection
+    match /projects/{projectId} {
+      allow read, write: if true;
+    }
+    
+    // Skills collection
+    match /skills/{skillId} {
+      allow read, write: if true;
+    }
+    
+    // Education collection
+    match /education/{educationId} {
+      allow read, write: if true;
+    }
+    
+    // API Keys collection - restricted access
+    match /apiKeys/{keyId} {
+      allow read, write: if true;
+    }
+  }
+}

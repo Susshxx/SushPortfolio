@@ -32,7 +32,7 @@ const ROTATIONS = [-3, -2, -1, 1, 2, 3, -2.5, 1.5];
 
 export function Skills() {
   return (
-    <section id="skills" className="w-full border-b border-line bg-amber-50 dark:bg-amber-950 px-6">
+    <section id="skills" className="w-full border-b border-line bg-amber-50 dark:bg-amber-950 px-6 relative z-0">
       <div className="mx-auto w-full max-w-[896px] pb-24 md:pb-28">
         <SectionHeading number="02." title="Skills" />
 
@@ -60,12 +60,12 @@ export function Skills() {
                 rotate: 0, 
                 scale: 1.05, 
                 y: -8,
-                zIndex: 50
+                transition: { duration: 0.2 }
               }}
               style={{ 
                 rotate: ROTATIONS[index % ROTATIONS.length] 
               }}
-              className={`${group.color} dark:bg-opacity-80 p-6 shadow-lg relative z-10 dark:shadow-xl`}>
+              className={`${group.color} dark:bg-opacity-80 p-6 shadow-lg relative hover:z-10 dark:shadow-xl`}>
               
               <div className="absolute top-2 left-1/2 -translate-x-1/2 w-16 h-1 bg-black/10 dark:bg-white/10 rounded-full" />
               

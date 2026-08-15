@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { About } from './components/About';
@@ -9,6 +9,7 @@ import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { CursorTrail } from './components/CursorTrail';
 import { ThemeToggle } from './components/ThemeToggle';
+import { WelcomeScreen } from './components/WelcomeScreen';
 
 export function App() {
   useEffect(() => {
@@ -35,20 +36,39 @@ export function App() {
     };
   }, []);
 
-  return (
-    <div className="min-h-screen w-full bg-white">
-      <CursorTrail />
-      <Header />
-      <main>
-        <Hero />
-        <About />
-        <Skills />
-        <Projects />
-        <Education />
-        <Contact />
-      </main>
-      <Footer />
-      <ThemeToggle />
-    </div>);
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'Enter') {
+        e.preventDefault();
+        window.location.href = '/admin';
+      }
+    };
 
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const handleOpenAdmin = () => {
+    window.location.href = '/admin';
+  };
+
+  return (
+    <>
+      <WelcomeScreen />
+      <div className="min-h-screen w-full bg-white">
+        <CursorTrail />
+        <Header onOpenAdminPanel={handleOpenAdmin} />
+        <main>
+          <Hero />
+          <About />
+          <Skills />
+          <Projects />
+          <Education />
+          <Contact />
+        </main>
+        <Footer />
+        <ThemeToggle />
+      </div>
+    </>
+  );
 }
