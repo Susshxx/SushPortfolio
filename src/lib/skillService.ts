@@ -5,8 +5,6 @@ import {
   deleteDoc,
   doc,
   getDocs,
-  query,
-  orderBy,
   Timestamp
 } from 'firebase/firestore';
 import { db, isFirebaseConfigured } from './firebase';
@@ -33,8 +31,7 @@ export async function getAllSkills(): Promise<SkillGroup[]> {
   }
 
   try {
-    const q = query(collection(db, SKILLS_COLLECTION), orderBy('order', 'asc'));
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await getDocs(collection(db, SKILLS_COLLECTION));
     const skills: SkillGroup[] = [];
 
     querySnapshot.forEach((doc) => {
@@ -45,6 +42,14 @@ export async function getAllSkills(): Promise<SkillGroup[]> {
         createdAt: data.createdAt?.toDate(),
         updatedAt: data.updatedAt?.toDate(),
       } as SkillGroup);
+    });
+
+    // Sort by order if available
+    skills.sort((a, b) => {
+      if (a.order !== undefined && b.order !== undefined) {
+        return a.order - b.order;
+      }
+      return 0;
     });
 
     return skills;

@@ -5,8 +5,6 @@ import {
   deleteDoc,
   doc,
   getDocs,
-  query,
-  orderBy,
   Timestamp
 } from 'firebase/firestore';
 import { db, isFirebaseConfigured } from './firebase';
@@ -39,8 +37,7 @@ export async function getAllProjects(): Promise<Project[]> {
   }
 
   try {
-    const q = query(collection(db, PROJECTS_COLLECTION), orderBy('createdAt', 'desc'));
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await getDocs(collection(db, PROJECTS_COLLECTION));
     const projects: Project[] = [];
 
     querySnapshot.forEach((doc) => {
@@ -51,6 +48,14 @@ export async function getAllProjects(): Promise<Project[]> {
         createdAt: data.createdAt?.toDate(),
         updatedAt: data.updatedAt?.toDate(),
       } as Project);
+    });
+
+    // Sort by createdAt if available, otherwise by id
+    projects.sort((a, b) => {
+      if (a.createdAt && b.createdAt) {
+        return b.createdAt.getTime() - a.createdAt.getTime();
+      }
+      return 0;
     });
 
     return projects;
