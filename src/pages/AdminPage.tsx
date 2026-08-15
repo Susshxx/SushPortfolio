@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowLeftIcon, DatabaseIcon } from 'lucide-react';
 import { ProjectsTab } from './admin/ProjectsTab';
 import { SkillsTab } from './admin/SkillsTab';
@@ -10,6 +10,7 @@ import { getAllEducation, addEducation } from '../lib/educationService';
 import { SEED_PROJECTS, SEED_SKILLS, SEED_EDUCATION } from '../lib/seedData';
 
 const ADMIN_PASSWORD = 'Sushhora';
+const AUTH_STORAGE_KEY = 'admin_authenticated';
 
 type Tab = 'projects' | 'skills' | 'education' | 'apiKeys';
 
@@ -21,12 +22,21 @@ export function AdminPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  useEffect(() => {
+    // Check if user was previously authenticated
+    const storedAuth = localStorage.getItem(AUTH_STORAGE_KEY);
+    if (storedAuth === 'true') {
+      setAuthenticated(true);
+    }
+  }, []);
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === ADMIN_PASSWORD) {
       setAuthenticated(true);
       setPassword('');
       setError('');
+      localStorage.setItem(AUTH_STORAGE_KEY, 'true');
     } else {
       setError('Incorrect password');
     }
