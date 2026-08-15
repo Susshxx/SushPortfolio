@@ -10,8 +10,30 @@ export function Router() {
       setCurrentPath(window.location.pathname);
     };
 
+    // Handle browser back/forward
     window.addEventListener('popstate', handleNavigation);
-    return () => window.removeEventListener('popstate', handleNavigation);
+    
+    // Intercept link clicks for client-side routing
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest('a');
+      
+      if (anchor && anchor.href && anchor.origin === window.location.origin) {
+        const href = anchor.getAttribute('href');
+        if (href && (href.startsWith('/admin') || href === '/')) {
+          e.preventDefault();
+          window.history.pushState({}, '', href);
+          setCurrentPath(href);
+        }
+      }
+    };
+
+    document.addEventListener('click', handleClick);
+    
+    return () => {
+      window.removeEventListener('popstate', handleNavigation);
+      document.removeEventListener('click', handleClick);
+    };
   }, []);
 
   // Route matching
