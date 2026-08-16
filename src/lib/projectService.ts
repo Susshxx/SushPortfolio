@@ -54,9 +54,19 @@ export async function getAllProjects(): Promise<Project[]> {
 
     // Sort by order if available, otherwise by createdAt
     projects.sort((a, b) => {
+      // Both have order - sort by order ascending
       if (a.order !== undefined && b.order !== undefined) {
         return a.order - b.order;
       }
+      // Only a has order - a comes first
+      if (a.order !== undefined) {
+        return -1;
+      }
+      // Only b has order - b comes first
+      if (b.order !== undefined) {
+        return 1;
+      }
+      // Neither has order - sort by createdAt ascending
       if (a.createdAt && b.createdAt) {
         return a.createdAt.getTime() - b.createdAt.getTime();
       }

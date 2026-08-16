@@ -608,7 +608,18 @@ function ProjectRow({ project, reversed }: {project: Project;reversed: boolean;}
   return (
     <article className="grid items-center gap-10 md:grid-cols-2 md:gap-6">
       <div className={reversed ? 'md:order-2' : 'md:order-1'}>
-        <div className="h-[240px] overflow-hidden rounded-2xl">{project.visual}</div>
+        {project.link ? (
+          <a 
+            href={project.link.href}
+            target="_blank"
+            rel="noreferrer"
+            className="block h-[240px] overflow-hidden rounded-2xl hover:opacity-90 transition-opacity"
+          >
+            {project.visual}
+          </a>
+        ) : (
+          <div className="h-[240px] overflow-hidden rounded-2xl">{project.visual}</div>
+        )}
       </div>
 
       <div
@@ -616,6 +627,9 @@ function ProjectRow({ project, reversed }: {project: Project;reversed: boolean;}
         reversed ? 'md:order-1 md:items-end md:text-right' : 'md:order-2 md:items-start'}`
         }>
         
+        {project.order !== undefined && (
+          <span className="font-mono text-xs text-gray-500">#{project.order}</span>
+        )}
         {project.eyebrow && <p className="font-mono text-xs text-accent">{project.eyebrow}</p>}
         <h3 className="font-display text-2xl font-bold text-heading">{project.title}</h3>
 
