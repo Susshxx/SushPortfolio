@@ -20,6 +20,7 @@ export type Project = {
   liveUrl?: string;
   imageUrl?: string;
   order?: number;
+  projectType?: 'live-demo' | 'github' | 'personal';
   createdAt?: Date;
   updatedAt?: Date;
 };

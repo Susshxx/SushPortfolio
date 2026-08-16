@@ -12,6 +12,7 @@ type Project = {
   note?: string;
   imageUrl?: string;
   order?: number;
+  projectType?: 'live-demo' | 'github' | 'personal';
 };
 
 export function ProjectsTab() {
@@ -41,6 +42,7 @@ export function ProjectsTab() {
       title: '',
       description: '',
       tech: [],
+      projectType: 'personal',
     });
     setShowForm(true);
   };
@@ -118,6 +120,20 @@ export function ProjectsTab() {
               className="w-full rounded border border-gray-300 px-3 py-2 cursor-text"
               required
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Project Type *</label>
+            <select
+              value={editingProject.projectType || 'personal'}
+              onChange={(e) => setEditingProject({ ...editingProject, projectType: e.target.value as 'live-demo' | 'github' | 'personal' })}
+              className="w-full rounded border border-gray-300 px-3 py-2 cursor-pointer"
+              required
+            >
+              <option value="personal">Personal Project</option>
+              <option value="live-demo">Live Demo</option>
+              <option value="github">GitHub Repository</option>
+            </select>
           </div>
 
           <div>
@@ -203,9 +219,16 @@ export function ProjectsTab() {
                     <span key={t} className="text-xs bg-gray-100 px-2 py-1 rounded">{t}</span>
                   ))}
                 </div>
-                {project.order !== undefined && (
-                  <span className="text-xs text-gray-500 mt-2 block">Order: {project.order}</span>
-                )}
+                <div className="flex gap-2 mt-2">
+                  {project.projectType && (
+                    <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded capitalize">
+                      {project.projectType === 'live-demo' ? 'Live Demo' : project.projectType === 'github' ? 'GitHub' : 'Personal'}
+                    </span>
+                  )}
+                  {project.order !== undefined && (
+                    <span className="text-xs text-gray-500">Order: {project.order}</span>
+                  )}
+                </div>
               </div>
               <div className="flex gap-2">
                 <button onClick={() => handleEdit(project)} className="p-2 hover:bg-gray-100 rounded cursor-pointer">
