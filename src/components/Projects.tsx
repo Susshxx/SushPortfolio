@@ -627,9 +627,6 @@ function ProjectRow({ project, reversed }: {project: Project;reversed: boolean;}
         reversed ? 'md:order-1 md:items-end md:text-right' : 'md:order-2 md:items-start'}`
         }>
         
-        {project.order !== undefined && (
-          <span className="font-mono text-xs text-gray-500">#{project.order}</span>
-        )}
         {project.eyebrow && <p className="font-mono text-xs text-accent">{project.eyebrow}</p>}
         <h3 className="font-display text-2xl font-bold text-heading">{project.title}</h3>
 

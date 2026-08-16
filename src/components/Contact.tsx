@@ -9,7 +9,7 @@ import {
 '../lib/emailjsConfig';
 
 const DETAILS = [
-{ icon: MailIcon, label: 'Email', value: 'susaaant@gmail.com', href: 'https://mail.google.com/mail/u/0/#inbox?compose=GTvVlcSDbSGqZnvkfKJJMgTWDlTCLpHdBCHmGRVKgSpVtFkMJngqMKZzlkxPZtvJqqgnJqGmnXNfl', target:'_blank', },
+{ icon: MailIcon, label: 'Email', value: 'susaaant@gmail.com', href: 'mailto:susaaant@gmail.com', target:'_blank', },
 { icon: PhoneIcon, label: 'Phone', value: '+977 9826160838', href: 'tel:+9779826160838' },
 { icon: MapPinIcon, label: 'Location', value: 'Kathmandu, Nepal' }];
 

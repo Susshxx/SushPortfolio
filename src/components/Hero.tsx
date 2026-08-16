@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { GithubIcon, LinkedinIcon, MailIcon, MapPinIcon } from 'lucide-react';
+import { GithubIcon, LinkedinIcon, MailIcon, MapPinIcon, MessageCircleIcon } from 'lucide-react';
 import { useTypewriter } from '../hooks/useTypewriter';
 import { trackUserPresence } from '../lib/userPresence';
 
@@ -113,7 +113,16 @@ export function Hero() {
               <LinkedinIcon className="h-6 w-6" />
             </a>
             <a
-              href="https://mail.google.com/mail/u/0/#inbox?compose=GTvVlcSDbSGqZnvkfKJJMgTWDlTCLpHdBCHmGRVKgSpVtFkMJngqMKZzlkxPZtvJqqgnJqGmnXNfl"
+              href="https://wa.me/9779826160838"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="WhatsApp"
+              className="text-heading/70 transition-colors hover:text-accent">
+              
+              <MessageCircleIcon className="h-6 w-6" />
+            </a>
+            <a
+              href="mailto:susaaant@gmail.com"
               target="_blank"
               rel="noreferrer"
               aria-label="Contact"
