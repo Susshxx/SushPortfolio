@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ArrowLeftIcon, DatabaseIcon } from 'lucide-react';
 import { ProjectsTab } from './admin/ProjectsTab';
 import { SkillsTab } from './admin/SkillsTab';
@@ -21,6 +21,24 @@ export function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const inactivityTimerRef = useRef<number | null>(null);
+
+  const resetInactivityTimer = () => {
+    if (inactivityTimerRef.current) {
+      clearTimeout(inactivityTimerRef.current);
+    }
+    inactivityTimerRef.current = setTimeout(() => {
+      handleLogout();
+    }, 5 * 60 * 1000); // 5 minutes
+  };
+
+  const handleLogout = () => {
+    setAuthenticated(false);
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    if (inactivityTimerRef.current) {
+      clearTimeout(inactivityTimerRef.current);
+    }
+  };
 
   useEffect(() => {
     // Check if user was previously authenticated
@@ -29,6 +47,33 @@ export function AdminPage() {
       setAuthenticated(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (!authenticated) return;
+
+    // Set up activity listeners
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+    
+    const handleActivity = () => {
+      resetInactivityTimer();
+    };
+
+    events.forEach(event => {
+      window.addEventListener(event, handleActivity);
+    });
+
+    // Start the initial timer
+    resetInactivityTimer();
+
+    return () => {
+      events.forEach(event => {
+        window.removeEventListener(event, handleActivity);
+      });
+      if (inactivityTimerRef.current) {
+        clearTimeout(inactivityTimerRef.current);
+      }
+    };
+  }, [authenticated]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();

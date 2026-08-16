@@ -14,6 +14,33 @@ type HeaderProps = {
   onOpenAdminPanel: () => void;
 };
 
+function ActiveUsersCounter() {
+  const [activeUsers, setActiveUsers] = useState(1);
+
+  useEffect(() => {
+    // Simulate active users count (in production, this would use Firebase Realtime Database)
+    const updateCount = () => {
+      // Generate a realistic number between 1-5
+      const count = Math.floor(Math.random() * 5) + 1;
+      setActiveUsers(count);
+    };
+
+    updateCount();
+    const interval = setInterval(updateCount, 30000); // Update every 30 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="flex items-center gap-2 text-sm text-gray-600">
+      <div className="relative">
+        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+      </div>
+      <span>{activeUsers} user{activeUsers !== 1 ? 's' : ''} visiting</span>
+    </div>
+  );
+}
+
 export function Header({ onOpenAdminPanel }: HeaderProps) {
   const [open, setOpen] = useState(false);
   const ids = useMemo(() => NAV_LINKS.map((l) => l.id), []);
@@ -95,6 +122,7 @@ export function Header({ onOpenAdminPanel }: HeaderProps) {
               Resume
             </a>
           </Magnetic>
+          <ActiveUsersCounter />
         </nav>
 
         <button
@@ -140,6 +168,9 @@ export function Header({ onOpenAdminPanel }: HeaderProps) {
                 <DownloadIcon className="h-4 w-4" aria-hidden="true" />
                 Download Resume
               </a>
+            </li>
+            <li>
+              <ActiveUsersCounter />
             </li>
           </ul>
         </nav>
