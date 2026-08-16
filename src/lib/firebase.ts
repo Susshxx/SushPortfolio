@@ -1,5 +1,6 @@
 import { initializeApp, FirebaseApp } from 'firebase/app';
 import { getFirestore, Firestore } from 'firebase/firestore';
+import { getDatabase, Database } from 'firebase/database';
 
 // TODO: Replace with your Firebase project configuration
 // Get these values from Firebase Console > Project Settings > General
@@ -21,12 +22,14 @@ export const isFirebaseConfigured =
 
 let app: FirebaseApp | null = null;
 let firestoreDb: Firestore | null = null;
+let realtimeDb: Database | null = null;
 
 // Only initialize Firebase if configured
 if (isFirebaseConfigured) {
   try {
     app = initializeApp(firebaseConfig);
     firestoreDb = getFirestore(app);
+    realtimeDb = getDatabase(app);
     console.log('Firebase initialized successfully');
   } catch (error) {
     console.error('Error initializing Firebase:', error);
@@ -46,3 +49,4 @@ if (isFirebaseConfigured) {
 
 // Export Firestore instance (will be null if not configured)
 export const db = firestoreDb as Firestore;
+export const rtdb = realtimeDb as Database;

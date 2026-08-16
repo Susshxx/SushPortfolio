@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { GithubIcon, LinkedinIcon, MailIcon, MapPinIcon } from 'lucide-react';
 import { useTypewriter } from '../hooks/useTypewriter';
+import { trackUserPresence } from '../lib/userPresence';
 
 const ROLES = ['Project Manager', 'UI/UX Developer'];
 
@@ -9,34 +10,11 @@ function ActiveUsersCounter() {
   const [activeUsers, setActiveUsers] = useState(1);
 
   useEffect(() => {
-    // Track current session in sessionStorage for more accurate count
-    const sessionId = sessionStorage.getItem('visitor_session');
-    if (!sessionId) {
-      sessionStorage.setItem('visitor_session', Date.now().toString());
-    }
+    const cleanup = trackUserPresence((count) => {
+      setActiveUsers(count);
+    });
 
-    // Check if running on localhost
-    const isLocalhost = window.location.hostname === 'localhost' || 
-                        window.location.hostname === '127.0.0.1' ||
-                        window.location.hostname === '';
-
-    // Simulate active users count with a more stable approach
-    const updateCount = () => {
-      if (isLocalhost) {
-        // On localhost, always show 1 (just the developer)
-        setActiveUsers(1);
-      } else {
-        // On production, simulate with base count + random fluctuation
-        const baseCount = 1; // Current user
-        const additionalUsers = Math.floor(Math.random() * 3); // 0-2 additional users
-        setActiveUsers(baseCount + additionalUsers);
-      }
-    };
-
-    updateCount();
-    const interval = setInterval(updateCount, 3000); // Update every 3 seconds
-
-    return () => clearInterval(interval);
+    return cleanup;
   }, []);
 
   return (
