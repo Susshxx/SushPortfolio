@@ -53,7 +53,7 @@ export async function getAllProjects(): Promise<Project[]> {
     // Sort by createdAt if available, otherwise by id
     projects.sort((a, b) => {
       if (a.createdAt && b.createdAt) {
-        return b.createdAt.getTime() - a.createdAt.getTime();
+        return a.createdAt.getTime() - b.createdAt.getTime();
       }
       return 0;
     });
