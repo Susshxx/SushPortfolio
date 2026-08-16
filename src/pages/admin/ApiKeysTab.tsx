@@ -30,6 +30,12 @@ export function ApiKeysTab() {
     e.preventDefault();
     if (!newKeyName.trim()) return;
 
+    // Check if there's already an active API key
+    if (apiKeys.some(k => k.isActive)) {
+      alert('Only one API key is allowed at a time. Please delete the existing key before generating a new one.');
+      return;
+    }
+
     try {
       setLoading(true);
       const newKey = await createApiKey(newKeyName);
@@ -143,7 +149,8 @@ export function ApiKeysTab() {
         </div>
         <button 
           onClick={() => setShowCreateForm(true)} 
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer"
+          disabled={apiKeys.some(k => k.isActive)}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <PlusIcon className="h-4 w-4 inline mr-2" />
           Generate API Key
