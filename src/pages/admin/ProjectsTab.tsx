@@ -11,6 +11,7 @@ type Project = {
   link?: { label: string; href: string; icon: 'external' | 'github' };
   note?: string;
   imageUrl?: string;
+  order?: number;
 };
 
 export function ProjectsTab() {
@@ -152,6 +153,16 @@ export function ProjectsTab() {
             />
           </div>
 
+          <div>
+            <label className="block text-sm font-medium mb-1">Display Order (lower number = shown first)</label>
+            <input
+              type="number"
+              value={editingProject.order || ''}
+              onChange={(e) => setEditingProject({ ...editingProject, order: e.target.value ? parseInt(e.target.value) : undefined })}
+              className="w-full rounded border border-gray-300 px-3 py-2 cursor-text"
+            />
+          </div>
+
           <div className="flex gap-3 pt-4">
             <button onClick={handleSave} className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 cursor-pointer">
               <SaveIcon className="h-4 w-4 inline mr-2" />
@@ -192,6 +203,9 @@ export function ProjectsTab() {
                     <span key={t} className="text-xs bg-gray-100 px-2 py-1 rounded">{t}</span>
                   ))}
                 </div>
+                {project.order !== undefined && (
+                  <span className="text-xs text-gray-500 mt-2 block">Order: {project.order}</span>
+                )}
               </div>
               <div className="flex gap-2">
                 <button onClick={() => handleEdit(project)} className="p-2 hover:bg-gray-100 rounded cursor-pointer">

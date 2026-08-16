@@ -19,6 +19,7 @@ export type Project = {
   note?: string;
   liveUrl?: string;
   imageUrl?: string;
+  order?: number;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -50,8 +51,11 @@ export async function getAllProjects(): Promise<Project[]> {
       } as Project);
     });
 
-    // Sort by createdAt if available, otherwise by id
+    // Sort by order if available, otherwise by createdAt
     projects.sort((a, b) => {
+      if (a.order !== undefined && b.order !== undefined) {
+        return a.order - b.order;
+      }
       if (a.createdAt && b.createdAt) {
         return a.createdAt.getTime() - b.createdAt.getTime();
       }
