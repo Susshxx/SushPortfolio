@@ -1,14 +1,9 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { SectionHeading } from './SectionHeading';
+import { getAllSkills, type SkillGroup } from '../lib/skillService';
 
-type SkillGroup = {
-  title: string;
-  items: string[];
-  color: string;
-};
-
-const GROUPS: SkillGroup[] = [
+const STATIC_SKILLS: SkillGroup[] = [
 { title: 'Frontend', items: ['HTML', 'CSS', 'JavaScript', 'React'], color: 'bg-yellow-200 dark:bg-yellow-700' },
 { title: 'Backend', items: ['Node.js', 'Express', 'PHP'], color: 'bg-pink-200 dark:bg-pink-700' },
 { title: 'Database', items: ['MongoDB', 'Firebase', 'SQL'], color: 'bg-blue-200 dark:bg-blue-700' },
@@ -26,11 +21,40 @@ const GROUPS: SkillGroup[] = [
   color: 'bg-indigo-200 dark:bg-indigo-700'
 }];
 
-
 const ROTATIONS = [-3, -2, -1, 1, 2, 3, -2.5, 1.5];
 
-
 export function Skills() {
+  const [skills, setSkills] = useState<SkillGroup[]>(STATIC_SKILLS);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadSkills = async () => {
+      try {
+        const dbSkills = await getAllSkills();
+        if (dbSkills.length > 0) {
+          setSkills(dbSkills);
+        }
+      } catch (error) {
+        console.error('Failed to load skills from database, using static data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadSkills();
+  }, []);
+
+  if (loading) {
+    return (
+      <section id="skills" className="w-full border-b border-line bg-amber-50 dark:bg-amber-950 px-6 relative z-0">
+        <div className="mx-auto w-full max-w-[896px] pb-24 md:pb-28">
+          <SectionHeading number="02." title="Skills" />
+          <div className="text-center py-12">Loading...</div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="skills" className="w-full border-b border-line bg-amber-50 dark:bg-amber-950 px-6 relative z-0">
       <div className="mx-auto w-full max-w-[896px] pb-24 md:pb-28">
@@ -48,7 +72,7 @@ export function Skills() {
             }
           }}
           className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {GROUPS.map((group, index) => (
+          {skills.map((group, index) => (
             <motion.div
               key={group.title}
               variants={{

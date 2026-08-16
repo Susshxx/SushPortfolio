@@ -1,8 +1,9 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { GraduationCapIcon } from 'lucide-react';
 import { SectionHeading } from './SectionHeading';
+import { getAllEducation, type Education } from '../lib/educationService';
 
-const ENTRIES = [
+const STATIC_EDUCATION: Education[] = [
 {
   degree: 'Bachelor of Computer Science (BCS Hons)',
   school: 'Herald College Kathmandu',
@@ -18,8 +19,38 @@ const ENTRIES = [
   'Completed with a GPA of 3.25. Built a strong foundation in physics, mathematics, and analytical problem-solving.'
 }];
 
-
 export function Education() {
+  const [education, setEducation] = useState<Education[]>(STATIC_EDUCATION);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadEducation = async () => {
+      try {
+        const dbEducation = await getAllEducation();
+        if (dbEducation.length > 0) {
+          setEducation(dbEducation);
+        }
+      } catch (error) {
+        console.error('Failed to load education from database, using static data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadEducation();
+  }, []);
+
+  if (loading) {
+    return (
+      <section id="education" className="w-full border-b border-line bg-white px-6">
+        <div className="mx-auto w-full max-w-[896px] pb-24 md:pb-28">
+          <SectionHeading number="04." title="Education" />
+          <div className="text-center py-12">Loading...</div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="education" className="w-full border-b border-line bg-white px-6">
       <div className="mx-auto w-full max-w-[896px] pb-24 md:pb-28">
@@ -31,8 +62,8 @@ export function Education() {
             aria-hidden="true" />
           
 
-          {ENTRIES.map((entry) =>
-          <li key={entry.degree} className="relative flex gap-6">
+          {education.map((entry) =>
+          <li key={entry.id || entry.degree} className="relative flex gap-6">
               <span className="relative z-10 hidden h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-accent bg-white sm:flex">
                 <GraduationCapIcon className="h-[18px] w-[18px] text-accent" aria-hidden="true" />
               </span>

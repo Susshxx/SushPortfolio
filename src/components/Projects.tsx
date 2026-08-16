@@ -341,21 +341,13 @@
 
 // }
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ExternalLinkIcon, GithubIcon, LockIcon } from 'lucide-react';
 import { SectionHeading } from './SectionHeading';
+import { getAllProjects, type Project as DBProject } from '../lib/projectService';
 
-type Project = {
-  id?: string;
-  eyebrow?: string;
-  title: string;
-  description: string;
-  tech: string[];
-  link?: {label: string;href: string;icon: 'external' | 'github';};
-  note?: string;
+type Project = DBProject & {
   visual?: React.ReactNode;
-  liveUrl?: string;
-  imageUrl?: string;
 };
 
 function DieraVisual() {
@@ -576,7 +568,7 @@ function GameVisual() {
   );
 }
 
-const PROJECTS: Project[] = [
+const STATIC_PROJECTS: Project[] = [
 {
   eyebrow: 'Featured Project',
   title: 'Diera Shop',
@@ -611,7 +603,6 @@ const PROJECTS: Project[] = [
   note: 'Personal Projects',
   visual: <GameVisual />
 }];
-
 
 function ProjectRow({ project, reversed }: {project: Project;reversed: boolean;}) {
   return (
@@ -672,14 +663,61 @@ function ProjectRow({ project, reversed }: {project: Project;reversed: boolean;}
 }
 
 export function Projects() {
+  const [projects, setProjects] = useState<Project[]>(STATIC_PROJECTS);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        const dbProjects = await getAllProjects();
+        if (dbProjects.length > 0) {
+          // Map database projects to include visual components
+          const projectsWithVisuals = dbProjects.map((proj) => {
+            let visual;
+            if (proj.title === 'Diera Shop') {
+              visual = <DieraVisual />;
+            } else if (proj.title === 'LifeFlow') {
+              visual = <LifeFlowVisual />;
+            } else if (proj.title === 'AirWays') {
+              visual = <AirWaysVisual />;
+            } else if (proj.title === 'Game Dev Projects') {
+              visual = <GameVisual />;
+            } else {
+              visual = <CustomProjectVisual imageUrl={proj.imageUrl} title={proj.title} />;
+            }
+            return { ...proj, visual };
+          });
+          setProjects(projectsWithVisuals);
+        }
+      } catch (error) {
+        console.error('Failed to load projects from database, using static data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProjects();
+  }, []);
+
+  if (loading) {
+    return (
+      <section id="projects" className="w-full border-b border-line bg-white px-6">
+        <div className="mx-auto w-full max-w-[896px] pb-24 md:pb-28">
+          <SectionHeading number="03." title="Featured Work" />
+          <div className="text-center py-12">Loading...</div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="projects" className="w-full border-b border-line bg-white px-6">
       <div className="mx-auto w-full max-w-[896px] pb-24 md:pb-28">
         <SectionHeading number="03." title="Featured Work" />
 
         <div className="space-y-20 md:space-y-28">
-          {PROJECTS.map((project, i) =>
-          <ProjectRow key={project.title} project={project} reversed={i % 2 === 1} />
+          {projects.map((project, i) =>
+          <ProjectRow key={project.id || project.title} project={project} reversed={i % 2 === 1} />
           )}
         </div>
       </div>
