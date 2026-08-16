@@ -30,7 +30,7 @@ export function Header({ onOpenAdminPanel }: HeaderProps) {
     longPressTimer.current = window.setTimeout(() => {
       onOpenAdminPanel();
       setOpen(false);
-    }, 2000);
+    }, 1000);
   };
 
   const handleMouseUp = () => {
@@ -44,7 +44,7 @@ export function Header({ onOpenAdminPanel }: HeaderProps) {
     longPressTimer.current = window.setTimeout(() => {
       onOpenAdminPanel();
       setOpen(false);
-    }, 2000);
+    }, 1000);
   };
 
   const handleTouchEnd = () => {
@@ -135,7 +135,7 @@ export function Header({ onOpenAdminPanel }: HeaderProps) {
                 href="/Sushanta Marahatta CV.pdf"
                 download
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2 text-base font-medium text-accent">
+                className="flex items-center gap-2 rounded bg-black px-4 py-2 text-base font-medium text-white">
                 
                 <DownloadIcon className="h-4 w-4" aria-hidden="true" />
                 Download Resume
