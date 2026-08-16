@@ -121,15 +121,27 @@ export function Hero() {
               
               <MessageCircleIcon className="h-6 w-6" />
             </a>
-            <a
-              href="mailto:susaaant@gmail.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Contact"
-              className="text-heading/70 transition-colors hover:text-accent">
-              
-              <MailIcon className="h-6 w-6" />
-            </a>
+            <>
+              {/* Phones: hand off to the native mail app */}
+              <a
+                href="mailto:susaaant@gmail.com"
+                aria-label="Contact"
+                className="text-heading/70 transition-colors hover:text-accent sm:hidden"
+              >
+                <MailIcon className="h-6 w-6" />
+              </a>
+
+              {/* Larger screens: open Gmail compose in a new tab */}
+              <a
+                href="https://mail.google.com/mail/?view=cm&fs=1&to=susaaant@gmail.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Contact"
+                className="hidden text-heading/70 transition-colors hover:text-accent sm:block"
+              >
+                <MailIcon className="h-6 w-6" />
+              </a>
+            </>
           </div>
         </motion.div>
 

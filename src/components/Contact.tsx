@@ -9,7 +9,7 @@ import {
 '../lib/emailjsConfig';
 
 const DETAILS = [
-{ icon: MailIcon, label: 'Email', value: 'susaaant@gmail.com', href: 'mailto:susaaant@gmail.com', target:'_blank', },
+{ icon: MailIcon, label: 'Email', value: 'susaaant@gmail.com', mobileHref: 'mailto:susaaant@gmail.com', desktopHref: 'https://mail.google.com/mail/?view=cm&fs=1&to=susaaant@gmail.com' },
 { icon: PhoneIcon, label: 'Phone', value: '+977 9826160838', href: 'tel:+9779826160838' },
 { icon: MapPinIcon, label: 'Location', value: 'Kathmandu, Nepal' }];
 
@@ -83,23 +83,42 @@ export function Contact() {
 
         <div className="mt-14 grid items-start gap-8 lg:grid-cols-[360px_1fr]">
           <div className="flex flex-col gap-8 rounded-2xl border border-line bg-white p-8 shadow-sm">
-            {DETAILS.map(({ icon: Icon, label, value, href, target }) =>
-            <div key={label} className="flex items-center gap-4">
+            {DETAILS.map(({ icon: Icon, label, value, mobileHref, desktopHref, href, target }) => (
+              <div key={label} className="flex items-center gap-4">
                 <span className="rounded-xl bg-secondary p-3 text-accent">
                   <Icon className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <div>
                   <p className="text-sm text-body">{label}</p>
-                  {href ?
-                <a href={href} target={target} className="text-base font-semibold text-heading hover:underline">
+                  {label === 'Email' ? (
+                    <>
+                      {/* Phones: hand off to the native mail app */}
+                      <a 
+                        href={mobileHref} 
+                        className="text-base font-semibold text-heading hover:underline sm:hidden"
+                      >
+                        {value}
+                      </a>
+                      {/* Larger screens: open Gmail compose in a new tab */}
+                      <a 
+                        href={desktopHref} 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="hidden text-base font-semibold text-heading hover:underline sm:block"
+                      >
+                        {value}
+                      </a>
+                    </>
+                  ) : href ? (
+                    <a href={href} target={target} className="text-base font-semibold text-heading hover:underline">
                       {value}
-                    </a> :
-
-                <p className="text-base font-semibold text-heading">{value}</p>
-                }
+                    </a>
+                  ) : (
+                    <p className="text-base font-semibold text-heading">{value}</p>
+                  )}
                 </div>
               </div>
-            )}
+            ))}
           </div>
 
           <form
