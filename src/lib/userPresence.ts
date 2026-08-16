@@ -6,6 +6,7 @@ const PRESENCE_PATH = 'presence';
 export function trackUserPresence(onCountChange: (count: number) => void) {
   if (!isFirebaseConfigured || !rtdb) {
     // Firebase not configured, fallback to 1
+    console.warn('Firebase Realtime Database not configured, using fallback count');
     onCountChange(1);
     return () => {};
   }
@@ -24,34 +25,51 @@ export function trackUserPresence(onCountChange: (count: number) => void) {
   set(userStatusRef, {
     online: true,
     lastSeen: serverTimestamp(),
+  }).catch((error) => {
+    console.error('Error setting user presence:', error);
+    onCountChange(1); // Fallback to 1 on error
   });
 
   // Remove this user when they disconnect
-  onDisconnect(userStatusRef).remove();
+  onDisconnect(userStatusRef).remove().catch((error) => {
+    console.error('Error setting onDisconnect:', error);
+  });
 
   // Count online users
-  let count = 0;
+  let unsubscribe: (() => void) | null = null;
 
-  const countUsers = () => {
-    onValue(presenceRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        // Count only user entries (exclude the 'count' field if it exists)
-        const userCount = Object.keys(data).filter(key => key !== 'count').length;
-        count = userCount;
-        onCountChange(count);
-      } else {
-        count = 0;
-        onCountChange(0);
+  try {
+    unsubscribe = onValue(presenceRef, (snapshot) => {
+      try {
+        const data = snapshot.val();
+        if (data) {
+          // Count only user entries (exclude the 'count' field if it exists)
+          const userCount = Object.keys(data).filter(key => key !== 'count').length;
+          onCountChange(userCount > 0 ? userCount : 1);
+        } else {
+          onCountChange(1);
+        }
+      } catch (error) {
+        console.error('Error processing presence data:', error);
+        onCountChange(1);
       }
+    }, (error) => {
+      console.error('Error listening to presence:', error);
+      onCountChange(1);
     });
-  };
-
-  countUsers();
+  } catch (error) {
+    console.error('Error setting up presence listener:', error);
+    onCountChange(1);
+  }
 
   // Return cleanup function
   return () => {
-    set(userStatusRef, null);
+    if (unsubscribe) {
+      unsubscribe();
+    }
+    set(userStatusRef, null).catch((error) => {
+      console.error('Error cleaning up presence:', error);
+    });
   };
 }
 
@@ -63,15 +81,25 @@ export function getPresenceCount(): Promise<number> {
   return new Promise((resolve) => {
     const presenceRef = ref(rtdb, PRESENCE_PATH);
     const unsubscribe = onValue(presenceRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const userCount = Object.keys(data).filter(key => key !== 'count').length;
+      try {
+        const data = snapshot.val();
+        if (data) {
+          const userCount = Object.keys(data).filter(key => key !== 'count').length;
+          unsubscribe();
+          resolve(userCount > 0 ? userCount : 1);
+        } else {
+          unsubscribe();
+          resolve(1);
+        }
+      } catch (error) {
+        console.error('Error getting presence count:', error);
         unsubscribe();
-        resolve(userCount);
-      } else {
-        unsubscribe();
-        resolve(0);
+        resolve(1);
       }
+    }, (error) => {
+      console.error('Error listening for presence count:', error);
+      unsubscribe();
+      resolve(1);
     });
   });
 }
